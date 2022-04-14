@@ -1,0 +1,8 @@
+# directory
+*build*
+*egg*
+__pycache__
+.vscode
+
+# file
+*.so
