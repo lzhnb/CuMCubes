@@ -15,9 +15,9 @@ pip install .
 
 ## TODO
 - [x] Python wrapper
-- [ ] Examples
-- [ ] C++ template support
+- [x] Examples
 - [ ] Realizing `marching_cubes_func`
+- [ ] C++ template support
 - [ ] Optimize the code
 - [ ] Release as python package
 

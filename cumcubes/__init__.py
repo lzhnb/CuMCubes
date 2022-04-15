@@ -6,7 +6,7 @@ import torch
 import numpy as np
 
 from . import src as _C
-
+from .utils import Timer
 
 def marching_cubes(
     density_grid: Union[torch.Tensor, np.ndarray],
@@ -34,6 +34,7 @@ def marching_cubes(
     # process density_grid
     if isinstance(density_grid, np.ndarray): density_grid = torch.tensor(density_grid)
     density_grid = density_grid.cuda()
+    density_grid = density_grid.to(torch.float32)
 
     lower: List[float]
     upper: List[float]
@@ -100,3 +101,5 @@ def save_mesh(
     else:
         raise NotImplementedError()
 
+
+__all__ = ["Timer", "marching_cubes", "save_mesh"]
