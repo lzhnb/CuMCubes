@@ -224,7 +224,8 @@ std::vector<torch::Tensor> marching_cubes_wrapper(
         torch::TensorOptions().dtype(torch::kInt).device(curr_device));
 
     // init for parallel
-    const uint32_t threads_x = 4, threads_y = 4, threads_z = 4;
+    // NOTE: There is a maximum of 1024 threads per block
+    const uint32_t threads_x = 8, threads_y = 8, threads_z = 8;
     const dim3 threads = {threads_x, threads_y, threads_z};
     const uint32_t blocks_x = div_round_up(static_cast<uint32_t>(resolution[0]), threads_x),
                    blocks_y = div_round_up(static_cast<uint32_t>(resolution[1]), threads_y),
@@ -247,6 +248,7 @@ std::vector<torch::Tensor> marching_cubes_wrapper(
     }
 
     // init the essential tensor(memory space)
+    // TODO: replace the vertex_grid with a compact representation to save memory and prepare for the sparse
     torch::Tensor vertex_grid = torch::zeros({resolution[0], resolution[1], resolution[2], 3},
         torch::TensorOptions().dtype(torch::kInt).device(curr_device));
     torch::Tensor vertices = torch::zeros({num_vertices, 3},

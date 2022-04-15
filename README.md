@@ -28,11 +28,12 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 ```python
 >>> import torch
 >>> import cumcubes
+
 >>> X, Y, Z = torch.meshgrid(torch.linspace(0, 99, 200), torch.linspace(0, 99, 200), torch.linspace(0, 99, 200), indexing="ij")
 >>> DENSITY_GRID = ((X - 50)**2 + (Y - 50)**2 + (Z - 50)**2 - 25**2).cuda()
 >>> with cumcubes.Timer("cuda marching cube: {:.6f}s"):
 >>>     vertices_cu, faces_cu = cumcubes.marching_cubes(DENSITY_GRID, 0, verbose=True) # verbose to print the number of vertices and faces
-# cuda marching cube: 0.007822s
+# cuda marching cube: 0.004981s
 
 """ Compare with the CPU implementation """
 >>> density_grid_cpu = DENSITY_GRID.cpu().numpy()
@@ -41,6 +42,7 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 # cpu marching cube: 0.337798s
 ```
 
+> NOTE: Mallocating memory on GPU will consume some time.
 
 ## TODO
 - [x] Python wrapper
