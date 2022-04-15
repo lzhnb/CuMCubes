@@ -208,7 +208,7 @@ __global__ void gen_faces_kernel(
     }
 }
 
-std::vector<torch::Tensor> marching_cubes_wrapper(
+std::vector<torch::Tensor> mc::marching_cubes_wrapper(
     const torch::Tensor& density_grid,
     const float thresh,
     const float* lower,

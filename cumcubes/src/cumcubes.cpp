@@ -8,7 +8,7 @@
 #include "cumcubes.hpp"
 
 
-std::vector<torch::Tensor> marching_cubes(
+std::vector<torch::Tensor> mc::marching_cubes(
     const torch::Tensor& density_grid,
     const float thresh,
     const std::vector<float> lower,
@@ -25,13 +25,13 @@ std::vector<torch::Tensor> marching_cubes(
     const float l[3] = {lower[0], lower[1], lower[2]};
     const float u[3] = {upper[0], upper[1], upper[2]};
     
-    std::vector<Tensor> results = marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
+    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
     
     return results;
 }
 
 
-std::vector<torch::Tensor> marching_cubes_func(
+std::vector<torch::Tensor> mc::marching_cubes_func(
     const torch::Tensor& sample_points,
     const float thresh,
     const std::vector<float> lower,
@@ -73,12 +73,12 @@ std::vector<torch::Tensor> marching_cubes_func(
     const float u[3] = {upper[0], upper[1], upper[2]};
 
     density_grid = density_grid.to(torch::kCUDA);
-    std::vector<Tensor> results = marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
+    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
     
     return results;
 }
 
-void save_mesh_as_ply(
+void mc::save_mesh_as_ply(
     const std::string filename,
     torch::Tensor vertices,
     torch::Tensor faces,

@@ -53,6 +53,7 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 - [ ] Release as python package
 - [ ] Sparse Marching Cubes
 - [ ] Support more mesh file formats.
+- [ ] CUDA-implementation SDF
 - [ ] Smoothing components
 
 

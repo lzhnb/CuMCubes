@@ -4,29 +4,34 @@
 
 using torch::Tensor;
 
-// defination
-std::vector<Tensor> marching_cubes(
-    const Tensor&,
-    const float,
-    const std::vector<float>,
-    const std::vector<float>,
-    const bool);
-std::vector<Tensor> marching_cubes_wrapper(
-    const Tensor&,
-    const float,
-    const float*,
-    const float*,
-    const bool);
-  
-std::vector<Tensor> marching_cubes_func(
-    const Tensor&,
-    const float,
-    const std::vector<float>,
-    const std::vector<float>,
-    const py::object&,
-    const bool);
+namespace mc
+{
+  // defination
+  std::vector<Tensor> marching_cubes(
+      const Tensor&,
+      const float,
+      const std::vector<float>,
+      const std::vector<float>,
+      const bool);
+  std::vector<Tensor> marching_cubes_wrapper(
+      const Tensor&,
+      const float,
+      const float*,
+      const float*,
+      const bool);
+    
+  std::vector<Tensor> marching_cubes_func(
+      const Tensor&,
+      const float,
+      const std::vector<float>,
+      const std::vector<float>,
+      const py::object&,
+      const bool);
 
-void save_mesh_as_ply(const std::string, Tensor, Tensor, Tensor);
+  void save_mesh_as_ply(const std::string, Tensor, Tensor, Tensor);
+} // namespace mc(marching cube)
+
+
 
 // Utils
 #define CHECK_CUDA(x) TORCH_CHECK(x.is_cuda(), #x " must be a CUDA tensor")
