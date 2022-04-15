@@ -211,6 +211,8 @@ __global__ void gen_faces_kernel(
 std::vector<torch::Tensor> marching_cubes_wrapper(
     const torch::Tensor& density_grid,
     const float thresh,
+    const float* lower,
+    const float* upper,
     const bool verbose
 ) {
     const torch::Device curr_device = density_grid.device();
@@ -251,7 +253,7 @@ std::vector<torch::Tensor> marching_cubes_wrapper(
         torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
     torch::Tensor faces = torch::zeros({num_faces, 3},
         torch::TensorOptions().dtype(torch::kInt).device(curr_device));
-    
+
     // generate vertices
     gen_vertices_kernel<<<blocks, threads>>>(
         density_grid.packed_accessor32<float, 3, torch::RestrictPtrTraits>(),
@@ -260,7 +262,7 @@ std::vector<torch::Tensor> marching_cubes_wrapper(
         vertex_grid.packed_accessor32<int32_t, 4, torch::RestrictPtrTraits>(),
         vertices.packed_accessor32<float, 2, torch::RestrictPtrTraits>(),
         counters.data_ptr<int32_t>() + 2);
-    
+
     // generate faces
     gen_faces_kernel<<<blocks, threads>>>(
         density_grid.packed_accessor32<float, 3, torch::RestrictPtrTraits>(),
@@ -269,6 +271,17 @@ std::vector<torch::Tensor> marching_cubes_wrapper(
         vertex_grid.packed_accessor32<int32_t, 4, torch::RestrictPtrTraits>(),
         faces.data_ptr<int32_t>(),
         counters.data_ptr<int32_t>() + 2);
+
+    // scale the vertices according into the bounding box
+    torch::Tensor offset = torch::tensor({lower[0], lower[1], lower[2]},
+        torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
+    torch::Tensor scale = torch::tensor(
+        {
+            (upper[0] - lower[0]) / static_cast<float>(resolution[0]),
+            (upper[2] - lower[1]) / static_cast<float>(resolution[1]),
+            (upper[2] - lower[2]) / static_cast<float>(resolution[2])},
+        torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
+    vertices = vertices * scale + offset;
 
     std::vector<torch::Tensor> results(2);
     results[0] = vertices;

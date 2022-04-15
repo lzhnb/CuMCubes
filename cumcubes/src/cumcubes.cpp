@@ -10,29 +10,39 @@
 std::vector<torch::Tensor> marching_cubes(
     const torch::Tensor& density_grid,
     const float thresh,
+    const std::vector<float> lower,
+    const std::vector<float> upper,
     const bool verbose=false
 ) {
     // check
     CHECK_INPUT(density_grid);
     TORCH_CHECK(density_grid.ndimension() == 3)
+
+    assert(lower.size() == 3);
+    assert(upper.size() == 3);
+
+    const float l[3] = {lower[0], lower[1], lower[2]};
+    const float u[3] = {upper[0], upper[1], upper[2]};
     
-    std::vector<Tensor> results = marching_cubes_wrapper(density_grid, thresh, verbose);
+    std::vector<Tensor> results = marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
     
     return results;
 }
 
-void save_mesh(
+void save_mesh_as_ply(
     const std::string filename,
     torch::Tensor vertices,
-    torch::Tensor faces
+    torch::Tensor faces,
+    torch::Tensor colors
 ) {
     CHECK_CONTIGUOUS(vertices);
     CHECK_CONTIGUOUS(faces);
+    CHECK_CONTIGUOUS(colors);
+    assert(colors.dtype() == torch::kUInt8);
 
     if (vertices.is_cuda()) { vertices = vertices.to(torch::kCPU); }
     if (faces.is_cuda()) { faces = faces.to(torch::kCPU); }
-
-    torch::Tensor colors = torch::ones_like(vertices) * 0.5;
+    if (colors.is_cuda()) { colors = colors.to(torch::kCPU); }
 
     std::ofstream ply_file(filename, std::ios::out | std::ios::binary);
     ply_file << "ply\n";
@@ -41,9 +51,9 @@ void save_mesh(
     ply_file << "property float x\n";
     ply_file << "property float y\n";
     ply_file << "property float z\n";
-    ply_file << "property float red\n";
-    ply_file << "property float blue\n";
-    ply_file << "property float green\n";
+    ply_file << "property uchar red\n";
+    ply_file << "property uchar green\n";
+    ply_file << "property uchar blue\n";
     ply_file << "element face " << faces.size(0) << std::endl;
     ply_file << "property list int int vertex_index\n";
 
@@ -51,9 +61,12 @@ void save_mesh(
 
     const int32_t num_vertices = vertices.size(0), num_faces = faces.size(0);
 
-    torch::Tensor vertices_colors = torch::cat({vertices, colors}, 1); // [num_vertices, 4]
-    const float* vertices_colors_ptr = vertices_colors.data_ptr<float>();
-    ply_file.write((char *)&(vertices_colors_ptr[0]), num_vertices * 6 * sizeof(float));
+    const float* vertices_ptr = vertices.data_ptr<float>();
+    const uint8_t* colors_ptr = colors.data_ptr<uint8_t>();
+    for (int32_t i = 0; i < num_vertices; ++i) {
+        ply_file.write((char *)&(vertices_ptr[i * 3]), 3 * sizeof(float));
+        ply_file.write((char *)&(colors_ptr[i * 3]), 3 * sizeof(uint8_t));
+    }
 
     torch::Tensor faces_head = torch::ones({num_faces, 1},
         torch::TensorOptions().dtype(torch::kInt).device(torch::kCPU)) * 3;

@@ -7,6 +7,6 @@
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
     m.def("marching_cubes", &marching_cubes);
-    m.def("save_mesh", &save_mesh);
+    m.def("save_mesh_as_ply", &save_mesh_as_ply);
 }
 
