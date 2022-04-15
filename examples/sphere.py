@@ -5,8 +5,7 @@ import numpy as np
 
 import cumcubes
 
-# Create a data volume (30 x 30 x 30)
-X, Y, Z = np.mgrid[:100, :100, :100]
+X, Y, Z = np.mgrid[:200, :200, :200]
 DENSITY_GRID = (X - 50)**2 + (Y - 50)**2 + (Z - 50)**2 - 25**2
 
 
