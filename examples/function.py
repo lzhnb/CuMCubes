@@ -26,6 +26,6 @@ if __name__ == "__main__":
             100, 100, 100,                  # Number of samples in each dimension
             sphere_f,                       # Implicit function
             16)                             # Isosurface value
-    with cumcubes.Timer("cumcubes save mesh: {:.6f}s"):
+    with cumcubes.Timer("mcubes save mesh: {:.6f}s"):
         mcubes.export_obj(vertices_c, faces_c, filename="sphere_func.obj")
 
