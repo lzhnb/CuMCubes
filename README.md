@@ -1,6 +1,13 @@
 # CuMCubes
 `CuMCubes` is an **CUDA** implementation of the marching cubes algorithm to extract iso-surfaces from volumetric data. The volumetric data can be given as a three-dimensional `torch.Tensor` or as a Python function `f(x, y, z)`.
 
+## Requirements
+The enviroment of my developer machine:
+- Python 3.8.8+
+- PyTorch 1.10.2
+- CUDA 11.1
+
+
 ## Installation
 ```sh
 python setup.py install
@@ -48,10 +55,8 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 
 
 ## Acknowledgement
-[instant-npg](https://github.com/NVlabs/instant-ngp)
-
-[PyMCubes](https://github.com/pmneila/PyMCubes)
-
-[AnalyticMesh](https://github.com/Gorilla-Lab-SCUT/AnalyticMesh)
+- [PyMCubes](https://github.com/pmneila/PyMCubes)
+- [instant-npg](https://github.com/NVlabs/instant-ngp)
+- [AnalyticMesh](https://github.com/Gorilla-Lab-SCUT/AnalyticMesh)
 
 > Please feel free to discuss :)
