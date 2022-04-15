@@ -1,12 +1,12 @@
 # Copyright (c) Zhihao Liang. All rights reserved.
 from pathlib import Path
-from typing import List, Optional, Sequence, Tuple, Union
+from typing import List, Optional, Sequence, Tuple, Union, Callable
 
 import torch
 import numpy as np
 
 from . import src as _C
-from .utils import Timer
+from .utils import Timer, scale_to_bound
 
 def marching_cubes(
     density_grid: Union[torch.Tensor, np.ndarray],
@@ -36,33 +36,42 @@ def marching_cubes(
     density_grid = density_grid.cuda()
     density_grid = density_grid.to(torch.float32)
 
+    if (density_grid.shape[0] < 2 or density_grid.shape[1] < 2 or density_grid.shape[2] < 2):
+        raise ValueError()
+
     lower: List[float]
     upper: List[float]
     # process scale as the bounding box
     if scale is None:
         lower = [0.0, 0.0, 0.0]
         upper = [density_grid.shape[0], density_grid.shape[1], density_grid.shape[2]]
-    elif isinstance(scale, float):
-        lower = [0.0, 0.0, 0.0]
-        upper = [scale, scale, scale]
-    elif isinstance(scale, (list, tuple, np.ndarray, torch.Tensor)):
-        if len(scale) == 3:
-            lower = [0.0, 0.0, 0.0]
-            upper = [i for i in scale]
-        elif len(scale) == 2:
-            if isinstance(scale[0], float):
-                lower = [scale[0]] * 3
-                upper = [scale[1]] * 3
-            else:
-                assert len(scale[0]) == len(scale[1]) == len(scale[2]) == 3
-                lower = [i for i in scale[0]]
-                upper = [i for i in scale[1]]
-        else:
-            raise TypeError()
     else:
-        raise TypeError()
+        lower, upper = scale_to_bound(scale)
 
     vertices, faces = _C.marching_cubes(density_grid, thresh, lower, upper, verbose)
+    return vertices, faces
+
+
+def marching_cubes_func(
+    scale: Optional[Union[float, Sequence]]=None,
+    num_x: int=100,
+    num_y: int=100,
+    num_z: int=100,
+    func: Callable=lambda x, y, z: x**2 + y**2 + z**2,
+    thresh: float=16,
+    verbose: bool=False
+) -> Tuple[torch.Tensor]:
+    # convert the scale to the bound
+    lower, upper = scale_to_bound(scale)
+
+    # get the sample grid
+    x = torch.linspace(lower[0], upper[0], num_x)
+    y = torch.linspace(lower[0], upper[0], num_y)
+    z = torch.linspace(lower[0], upper[0], num_z)
+    X, Y, Z = torch.meshgrid(x, y, z, indexing="ij")
+    sample_points = torch.stack((X, Y, Z), dim=-1).reshape(num_x, num_y, num_z, 3)
+
+    vertices, faces = _C.marching_cubes_func(sample_points, thresh, lower, upper, func, verbose)
     return vertices, faces
 
 
