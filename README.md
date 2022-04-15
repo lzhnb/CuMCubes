@@ -47,7 +47,7 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 ## TODO
 - [x] Python wrapper
 - [x] Examples (More Example)
-- [x] Realizing `marching_cubes_func` (NOTE: need to accelerate, put the loop in cpp)
+- [x] Realizing `marching_cubes_func`
 - [ ] C++ template support
 - [ ] Optimize the code
 - [ ] Release as python package

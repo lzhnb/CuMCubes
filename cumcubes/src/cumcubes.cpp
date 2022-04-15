@@ -44,19 +44,24 @@ std::vector<torch::Tensor> marching_cubes_func(
     // CHECK_INPUT(sample_points);
     TORCH_CHECK(sample_points.ndimension() == 4);
     torch::Device curr_device = sample_points.device();
-    torch::Tensor density_grid = torch::zeros({
-        sample_points.size(0), sample_points.size(1), sample_points.size(0)},
-        torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
+    const int32_t res_x = sample_points.size(0), res_y = sample_points.size(1), res_z = sample_points.size(2);
+    const int32_t offx = res_y * res_z, offy = res_z;
     
-    for (int32_t i = 0; i < sample_points.size(0); ++i) {
-        for (int32_t j = 0; j < sample_points.size(1); ++j) {
-            for (int32_t k = 0; k < sample_points.size(2); ++k) {
+    torch::Tensor density_grid = torch::zeros({res_x, res_y, res_z},
+        torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
+
+    const float* sample_points_ptr = sample_points.data_ptr<float>();
+    float* density_grid_ptr = density_grid.data_ptr<float>();
+
+    for (int32_t i = 0; i < res_x; ++i) {
+        for (int32_t j = 0; j < res_y; ++j) {
+            for (int32_t k = 0; k < res_z; ++k) {
                 const py::object density = func(
-                    sample_points.index({i, j, k, 0}).item<float>(),
-                    sample_points.index({i, j, k, 1}).item<float>(),
-                    sample_points.index({i, j, k, 2}).item<float>()
+                    sample_points_ptr[(i * offx + j * offy + k) * 3 + 0],
+                    sample_points_ptr[(i * offx + j * offy + k) * 3 + 1],
+                    sample_points_ptr[(i * offx + j * offy + k) * 3 + 2]
                 );
-                density_grid.index_put_({i, j, k}, density.cast<float>());
+                density_grid_ptr[i * offx + j * offy + k] = density.cast<float>();
             }
         }
     }
