@@ -8,7 +8,6 @@ using torch::Tensor;
 std::vector<Tensor> marching_cubes(const Tensor&, const float, const bool);
 std::vector<Tensor> marching_cubes_wrapper(const Tensor&, const float, const bool);
 void save_mesh(const std::string, Tensor, Tensor);
-void save_mesh_wrapper(const std::string, Tensor, Tensor);
 
 // Utils
 #define CHECK_CUDA(x) TORCH_CHECK(x.is_cuda(), #x " must be a CUDA tensor")
