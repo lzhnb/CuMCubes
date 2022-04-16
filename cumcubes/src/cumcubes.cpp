@@ -1,8 +1,6 @@
 // Copyright 2021 Zhihao Liang
-#include <torch/extension.h>
-#include <iostream>
 #include <cstdint>
-#include <tuple>
+#include <iostream>
 #include <pybind11/functional.h>
 
 #include "cumcubes.hpp"
@@ -12,8 +10,7 @@ std::vector<torch::Tensor> mc::marching_cubes(
     const torch::Tensor& density_grid,
     const float thresh,
     const std::vector<float> lower,
-    const std::vector<float> upper,
-    const bool verbose=false
+    const std::vector<float> upper
 ) {
     // check
     CHECK_INPUT(density_grid);
@@ -25,7 +22,7 @@ std::vector<torch::Tensor> mc::marching_cubes(
     const float l[3] = {lower[0], lower[1], lower[2]};
     const float u[3] = {upper[0], upper[1], upper[2]};
     
-    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
+    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u);
     
     return results;
 }
@@ -36,8 +33,7 @@ std::vector<torch::Tensor> mc::marching_cubes_func(
     const float thresh,
     const std::vector<float> lower,
     const std::vector<float> upper,
-    const py::object &func,
-    const bool verbose=false
+    const py::object &func
 ) {
     // check
     CHECK_CONTIGUOUS(sample_points);
@@ -73,7 +69,7 @@ std::vector<torch::Tensor> mc::marching_cubes_func(
     const float u[3] = {upper[0], upper[1], upper[2]};
 
     density_grid = density_grid.to(torch::kCUDA);
-    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u, verbose);
+    std::vector<Tensor> results = mc::marching_cubes_wrapper(density_grid, thresh, l, u);
     
     return results;
 }

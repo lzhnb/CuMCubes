@@ -1,8 +1,3 @@
-#include <torch/extension.h>
-#include <iostream>
-#include <cstdint>
-#include <tuple>
-
 #include "utils.cuh"
 
 
@@ -212,8 +207,7 @@ std::vector<torch::Tensor> mc::marching_cubes_wrapper(
     const torch::Tensor& density_grid,
     const float thresh,
     const float* lower,
-    const float* upper,
-    const bool verbose
+    const float* upper
 ) {
     const torch::Device curr_device = density_grid.device();
     const int32_t resolution[3] = {
@@ -241,11 +235,6 @@ std::vector<torch::Tensor> mc::marching_cubes_wrapper(
     
     const int32_t num_vertices = counters[0].item<int32_t>();
     const int32_t num_faces = counters[1].item<int32_t>() / 3;
-
-    if (verbose) {
-        printf("vertices: #vertices=%d\n", num_vertices);
-        printf("faces: #triangles=%d\n", num_faces);
-    }
 
     // init the essential tensor(memory space)
     // TODO: replace the vertex_grid with a compact representation to save memory and prepare for the sparse

@@ -1,0 +1,3 @@
+include asserts/*
+include cumcubes/include/*.h cumcubes/include/*.hpp cumcubes/include/*.cuh
+include cumcubes/src/*.cpp cumcubes/src/*.cu

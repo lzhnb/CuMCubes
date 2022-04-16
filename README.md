@@ -9,19 +9,27 @@ The enviroment of my developer machine:
 
 
 ## Installation
+You can use `pip install cumcubes` directly, or use:
 ```sh
 python setup.py install
 ```
-Or use
+Or use:
 ```sh
 pip install .
 ```
+Or use:
+```sh
+pip install https://github.com/lzhnb/CuMCubes
+```
+
 
 ## Example
 ```sh
 # toy examples from the PyMCubes
 python examples/sphere.py
 python examples/function.py
+# we extract the sdf of bunny via `mesh_to_sdf`
+python examples/bunny_sdf.py
 ```
 
 The following example creates a `torch.Tensor` volume with spherical iso-surfaces and extracts one of them (i.e., a sphere) with mcubes.marching_cubes. The result is exported to sphere.dae:
@@ -42,15 +50,19 @@ The following example creates a `torch.Tensor` volume with spherical iso-surface
 # cpu marching cube: 0.337798s
 ```
 
+<img src="asserts/bunny_cumcubes.png" height="342"/> <img src="asserts/bunny_mcubes.png" height="342"/>
+The left image is the result of `cumcubes.marching_cubes`, the right image is the result of `mcubes.marching_cubes`. (The Stanford Bunny Example)
+
 > NOTE: Mallocating memory on GPU will consume some time.
 
 ## TODO
 - [x] Python wrapper
 - [x] Examples (More Example)
 - [x] Realizing `marching_cubes_func`
-- [ ] C++ template support
+- [x] Support CPU version(wrapper of `mcubes`)
+- [x] Release as python package
+- [ ] Support C++ template
 - [ ] Optimize the code
-- [ ] Release as python package
 - [ ] Sparse Marching Cubes
 - [ ] Support more mesh file formats.
 - [ ] CUDA-implementation SDF

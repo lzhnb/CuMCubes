@@ -1,8 +1,4 @@
 // Copyright 2021 Zhihao Liang
-
-// This file contains only Python bindings
-#include <torch/extension.h>
-
 #include "cumcubes.hpp"
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {

@@ -1,7 +1,7 @@
 # Copyright (c) OpenMMLab. All rights reserved.
 import re
 from time import time
-from typing import List, Optional, Tuple, Union, Sequence
+from typing import List, Tuple, Union, Sequence
 
 import torch
 import numpy as np
