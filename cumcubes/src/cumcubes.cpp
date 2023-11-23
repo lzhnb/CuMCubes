@@ -1,4 +1,5 @@
 // Copyright 2021 Zhihao Liang
+#include <fstream>
 #include <cstdint>
 #include <iostream>
 #include <pybind11/functional.h>
