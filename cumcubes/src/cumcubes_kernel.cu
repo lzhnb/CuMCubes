@@ -269,7 +269,7 @@ std::vector<torch::Tensor> mc::marching_cubes_wrapper(
     torch::Tensor scale = torch::tensor(
         {
             (upper[0] - lower[0]) / static_cast<float>(resolution[0]),
-            (upper[2] - lower[1]) / static_cast<float>(resolution[1]),
+            (upper[1] - lower[1]) / static_cast<float>(resolution[1]),
             (upper[2] - lower[2]) / static_cast<float>(resolution[2])},
         torch::TensorOptions().dtype(torch::kFloat).device(curr_device));
     vertices = vertices * scale + offset;
